@@ -10,7 +10,7 @@ db = mysql.connector.connect(
     host=app.config["MYSQL_HOST"],
     user="root",
     password="mypassword",
-    database="Proj",
+    database=app.config["MYSQL_DB"],
     buffered=True,
 )
 
