@@ -14,4 +14,10 @@ db = mysql.connector.connect(
     buffered=True,
 )
 
+from flask_login import LoginManager
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "signin"
+
 from webapp import views # flake8: noqa

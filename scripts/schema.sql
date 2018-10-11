@@ -1,6 +1,7 @@
 CREATE TABLE Users(
     username VARCHAR(32),
     passwd VARCHAR(32),
+    email VARCHAR(64),
     PRIMARY KEY (username)
 );
 
