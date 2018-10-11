@@ -20,10 +20,11 @@ CREATE TABLE Locations(
 CREATE TABLE Universities(
     univid INT NOT NULL AUTO_INCREMENT,
     uname VARCHAR(64),
-    lid INT,
+    primarylid INT,
+    pop INT,
     descr TEXT,
     PRIMARY KEY (univid),
-    FOREIGN KEY (lid) REFERENCES Locations(lid)
+    FOREIGN KEY (primarylid) REFERENCES Locations(lid)
 );
 
 CREATE TABLE Students(
