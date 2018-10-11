@@ -1,14 +1,12 @@
 <html>
     <head>
-        <title>Login Page</title>
+        <title>Signup Page</title>
     </head>
     <body>
         <form action="{{ url_for('signup') }}" method="post">
             {{ form.username.label }}: {{ form.username }}
             <br>
             {{ form.password.label }}: {{ form.password }}
-            <br>
-            {{ form.email.label }}: {{ form.email }}
             <br>
             {{ form.csrf_token }}
             <input type="submit" >

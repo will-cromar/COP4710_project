@@ -1,7 +1,11 @@
 CREATE TABLE Users(
     username VARCHAR(32),
     passwd VARCHAR(32),
-    email VARCHAR(64),
+    PRIMARY KEY (username)
+);
+
+CREATE TABLE SuperUsers(
+    username VARCHAR(32),
     PRIMARY KEY (username)
 );
 
@@ -22,20 +26,26 @@ CREATE TABLE Universities(
     FOREIGN KEY (lid) REFERENCES Locations(lid)
 );
 
-CREATE TABLE Admins(
+CREATE TABLE Students(
     username VARCHAR(32),
     univid INT,
+    email VARCHAR(64),
     PRIMARY KEY (username),
-    FOREIGN KEY (username) REFERENCES Users(username),
     FOREIGN KEY (univid) REFERENCES Universities(univid)
 );
 
 CREATE TABLE RSOs(
     rid INT NOT NULL AUTO_INCREMENT,
     rsoname VARCHAR(64),
-    ownername VARCHAR(32),
-    PRIMARY KEY (rid),
-    FOREIGN KEY (ownername) REFERENCES Admins(username)
+    PRIMARY KEY (rid)
+);
+
+CREATE TABLE Admins(
+    username VARCHAR(32),
+    rid INT,
+    PRIMARY KEY (username),
+    FOREIGN KEY (username) REFERENCES Students(username),
+    FOREIGN KEY (rid) REFERENCES RSOs(rid)
 );
 
 CREATE TABLE Events(
@@ -60,7 +70,7 @@ CREATE TABLE RSOMembers(
     username VARCHAR(32),
     rid INT,
     PRIMARY KEY (username, rid),
-    FOREIGN KEY (username) REFERENCES Users(username),
+    FOREIGN KEY (username) REFERENCES Students(username),
     FOREIGN KEY (rid) REFERENCES RSOs(rid)
 );
 

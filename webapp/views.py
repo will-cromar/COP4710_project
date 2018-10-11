@@ -2,7 +2,7 @@ from flask import render_template, redirect
 from flask_login import current_user, login_required, login_user
 
 from . import app, db, models, login_manager
-from .forms import LoginForm, SignUpForm, LocationForm
+from .forms import CredentialsForm, LocationForm
 
 
 @login_manager.unauthorized_handler
@@ -23,11 +23,11 @@ def secret():
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
-    form = SignUpForm()
+    form = CredentialsForm()
     if form.validate_on_submit():
         c = db.cursor()
-        c.execute("INSERT INTO Users VALUES (%s, %s, %s)",
-                  (form.username.data, form.password.data, form.email.data))
+        c.execute("INSERT INTO Users(username, passwd) VALUES (%s, %s)",
+                  (form.username.data, form.password.data))
         warns = c.fetchwarnings()
         if not warns:
             db.commit()
@@ -42,7 +42,7 @@ def signup():
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
-    form = LoginForm()
+    form = CredentialsForm()
     if form.validate_on_submit():
         user = models.get_user(form.username.data,)
         if user and user.passwd == form.password.data:
