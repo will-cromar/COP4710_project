@@ -2,7 +2,7 @@ from flask import render_template, redirect
 from flask_login import current_user, login_required, login_user
 
 from . import app, db, models, login_manager
-from .forms import LoginForm, SignUpForm
+from .forms import LoginForm, SignUpForm, LocationForm
 
 
 @login_manager.unauthorized_handler
@@ -51,3 +51,25 @@ def login():
             return redirect('/myname')
 
     return render_template('login.html', form=form)
+
+
+@app.route('/locations', methods=["GET", "POST"])
+def locations():
+    form = LocationForm()
+    if form.validate_on_submit():
+        c = db.cursor()
+        c.execute(
+            "INSERT INTO Locations(lname, latitude, longitude)"
+            "VALUES (%s, %s, %s)",
+            (form.name.data, form.latitude.data, form.longitude.data))
+        warns = c.fetchwarnings()
+        if not warns:
+            db.commit()
+        else:
+            print(warns)
+
+        return redirect("/")
+    else:
+        print(form.errors)
+
+    return render_template('locations.html', form=form)

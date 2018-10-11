@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField, FloatField
 from wtforms.validators import DataRequired
 
 
@@ -10,3 +10,9 @@ class LoginForm(FlaskForm):
 
 class SignUpForm(LoginForm):
     email = StringField('Email')
+
+
+class LocationForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    latitude = FloatField('Latitude', validators=[DataRequired()])
+    longitude = FloatField('Longitude', validators=[DataRequired()])
