@@ -2,7 +2,8 @@ from flask import render_template, redirect
 from flask_login import current_user, login_required, login_user
 
 from . import app, db, models, login_manager
-from .forms import CredentialsForm, LocationForm, UniversityForm
+from .forms import (CredentialsForm, LocationForm, UniversityForm,
+                    StudentInfoForm)
 
 
 @login_manager.unauthorized_handler
@@ -95,3 +96,24 @@ def university_edit():
         print(form.errors)
 
     return render_template('university/edit.html', form=form)
+
+
+@app.route('/account/student', methods=["GET", "POST"])
+def student_info():
+    form = StudentInfoForm()
+    if form.validate_on_submit():
+        c = db.cursor()
+        c.execute(
+            "INSERT INTO Students(username, univid, email)"
+            "VALUES (%s, %s, %s)",
+            (current_user.username, form.univid.data, form.email.data))
+
+        warns = c.fetchwarnings()
+        if not warns:
+            db.commit()
+        else:
+            print(warns)
+    else:
+        print(form.errors)
+
+    return render_template('account/student.html', form=form)

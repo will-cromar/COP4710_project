@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, PasswordField, FloatField, IntegerField,
                      TextAreaField)
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Email
 
 
 class CredentialsForm(FlaskForm):
@@ -20,3 +20,8 @@ class UniversityForm(FlaskForm):
     location_id = IntegerField('Location ID')
     description = TextAreaField('Description')
     population = IntegerField('Population')
+
+
+class StudentInfoForm(FlaskForm):
+    univid = IntegerField('University ID', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
