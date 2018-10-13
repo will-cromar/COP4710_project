@@ -3,6 +3,16 @@ from flask_login import UserMixin
 from . import db, login_manager
 
 
+def is_super_user(username):
+    c = db.cursor()
+    c.execute(
+        "SELECT %s IN "
+        "(SELECT SuperUsers.username FROM SuperUsers);",
+        (username,))
+
+    return c.fetchone()[0] == 1
+
+
 def get_user(username):
     c = db.cursor(named_tuple=True)
     c.execute(

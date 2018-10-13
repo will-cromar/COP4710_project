@@ -1,4 +1,4 @@
-from flask import render_template, redirect
+from flask import render_template, redirect, abort
 from flask_login import current_user, login_required, login_user
 
 from . import app, db, models, login_manager
@@ -77,7 +77,11 @@ def locations():
 
 
 @app.route('/university/new', methods=["GET", "POST"])
+@login_required
 def university_edit():
+    if not models.is_super_user(current_user.username):
+        abort(403)
+
     form = UniversityForm()
     if form.validate_on_submit():
         c = db.cursor()
