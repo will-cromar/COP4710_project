@@ -38,3 +38,14 @@ class User(UserMixin):
             (self.username,))
 
         return c.fetchone()[0] == 1
+
+    def get_rsos(self):
+        c = db.cursor()
+        c.execute(
+            "SELECT RSOs.rid, rsoname "
+            "FROM RSOs "
+            "JOIN RSOMembers ON RSOs.rid = RSOMembers.rid "
+            "WHERE RSOMembers.username = %s",
+            (self.username,))
+
+        return c.fetchall()

@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, PasswordField, FloatField, IntegerField,
-                     TextAreaField)
+                     TextAreaField, SelectField)
+from wtforms.fields.html5 import DateField, TimeField
 from wtforms.validators import DataRequired, Email
 
 
@@ -34,3 +35,13 @@ class RSOForm(FlaskForm):
     user3 = StringField('User3', validators=[DataRequired()])
     user4 = StringField('User4', validators=[DataRequired()])
     user5 = StringField('User5', validators=[DataRequired()])
+
+
+class EventForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    date = DateField("Date", format='%Y-%m-%d', validators=[DataRequired()])
+    time = TimeField("Time", validators=[DataRequired()])
+    location_id = IntegerField("Location ID", validators=[DataRequired()])
+    cphone = StringField("Contact Phone", validators=[DataRequired()])
+    cemail = StringField("Contact Email", validators=[DataRequired()])
+    restriction = SelectField("Restriction", coerce=int)

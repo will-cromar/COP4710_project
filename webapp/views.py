@@ -3,7 +3,7 @@ from flask_login import current_user, login_required, login_user
 
 from . import app, db, models, login_manager
 from .forms import (CredentialsForm, LocationForm, UniversityForm,
-                    StudentInfoForm, RSOForm)
+                    StudentInfoForm, RSOForm, EventForm)
 
 
 @login_manager.unauthorized_handler
@@ -216,3 +216,38 @@ def rso_approve(rid):
         print(warns)
 
     return rid
+
+
+@app.route('/event/new', methods=["GET", "POST"])
+def event_edit():
+    form = EventForm()
+    print(current_user.get_rsos())
+    form.restriction.choices = ([(0, "None"), (-1, "My University")] +
+                                current_user.get_rsos())
+    if form.validate_on_submit():
+        if form.restriction.data == 0:
+            urestriction, rsorestriction = None, None
+        elif form.restriction.data == -1:
+            urestriction = current_user.univid
+            rsorestriction = None
+        else:
+            urestriction = None
+            rsorestriction = form.restriction.data
+
+        dtime = str(form.date.data) + " " + str(form.time.data)
+        c = db.cursor()
+        c.execute(
+            "INSERT INTO Events(title, dtime, lid, cphone, cemail, "
+            "urestriction, rsorestriction, approved) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            (form.title.data, dtime, form.location_id.data,
+                form.cphone.data, form.cemail.data, urestriction,
+                rsorestriction, rsorestriction is not None))
+
+        warns = c.fetchwarnings()
+        if not warns:
+            db.commit()
+        else:
+            print(warns)
+
+    return render_template('form.html', action="/event/new", form=form)

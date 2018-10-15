@@ -59,6 +59,7 @@ CREATE TABLE Events(
     cemail VARCHAR(64),
     urestriction INT,
     rsorestriction INT,
+    approved BOOL DEFAULT 0,
     PRIMARY KEY (eid),
     FOREIGN KEY (lid) REFERENCES Locations(lid),
     FOREIGN KEY (urestriction) REFERENCES Universities(univid),
