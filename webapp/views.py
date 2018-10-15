@@ -36,7 +36,7 @@ def signup():
 
         c.close()
         # TODO: Real confirmation
-        return redirect('/myname')
+        return redirect('/account/student')
 
     return render_template('signup.html', form=form)
 
@@ -79,7 +79,7 @@ def locations():
 @app.route('/university/new', methods=["GET", "POST"])
 @login_required
 def university_edit():
-    if not models.is_super_user(current_user.username):
+    if not current_user.is_super_user():
         abort(403)
 
     form = UniversityForm()
@@ -167,3 +167,52 @@ def rso_edit():
         print(form.errors)
 
     return render_template('form.html', action='/rso/new', form=form)
+
+
+@app.route('/rso/<rid>', methods=["GET", "POST"])
+@login_required
+def rso_view(rid):
+    return render_template('rso/view.html', rid=rid)
+
+
+@app.route('/rso/<rid>/join', methods=["POST"])
+@login_required
+def rso_join(rid):
+    if not current_user.univid:
+        abort(403)
+
+    c = db.cursor()
+    c.execute(
+            "INSERT INTO RSOMembers(username, rid)"
+            "VALUES (%s, %s)",
+            (current_user.username, rid))
+
+    warns = c.fetchwarnings()
+    if not warns:
+        db.commit()
+    else:
+        print(warns)
+
+    return rid
+
+
+@app.route('/rso/<rid>/approve', methods=["POST"])
+@login_required
+def rso_approve(rid):
+    if not current_user.is_super_user():
+        abort(403)
+
+    c = db.cursor()
+    c.execute(
+            "UPDATE RSOs "
+            "SET approved = 1 "
+            "WHERE rid = %s",
+            (rid,))
+
+    warns = c.fetchwarnings()
+    if not warns:
+        db.commit()
+    else:
+        print(warns)
+
+    return rid

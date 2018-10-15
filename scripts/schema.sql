@@ -29,7 +29,7 @@ CREATE TABLE Universities(
 
 CREATE TABLE Students(
     username VARCHAR(32),
-    univid INT,
+    univid INT NOT NULL,
     email VARCHAR(64),
     PRIMARY KEY (username),
     FOREIGN KEY (univid) REFERENCES Universities(univid)
