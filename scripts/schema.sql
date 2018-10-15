@@ -37,14 +37,15 @@ CREATE TABLE Students(
 
 CREATE TABLE RSOs(
     rid INT NOT NULL AUTO_INCREMENT,
-    rsoname VARCHAR(64),
+    rsoname VARCHAR(64) UNIQUE,
+    approved BOOL,
     PRIMARY KEY (rid)
 );
 
 CREATE TABLE Admins(
     username VARCHAR(32),
     rid INT,
-    PRIMARY KEY (username),
+    PRIMARY KEY (username, rid),
     FOREIGN KEY (username) REFERENCES Students(username),
     FOREIGN KEY (rid) REFERENCES RSOs(rid)
 );

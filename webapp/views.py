@@ -3,7 +3,7 @@ from flask_login import current_user, login_required, login_user
 
 from . import app, db, models, login_manager
 from .forms import (CredentialsForm, LocationForm, UniversityForm,
-                    StudentInfoForm)
+                    StudentInfoForm, RSOForm)
 
 
 @login_manager.unauthorized_handler
@@ -103,6 +103,7 @@ def university_edit():
 
 
 @app.route('/account/student', methods=["GET", "POST"])
+@login_required
 def student_info():
     form = StudentInfoForm()
     if form.validate_on_submit():
@@ -121,3 +122,48 @@ def student_info():
         print(form.errors)
 
     return render_template('account/student.html', form=form)
+
+
+@app.route('/rso/new', methods=["GET", "POST"])
+@login_required
+def rso_edit():
+    form = RSOForm()
+    if form.validate_on_submit():
+        c = db.cursor()
+        c.execute(
+            "INSERT INTO RSOs(rsoname, approved)"
+            "VALUES (%s, 0)",
+            (form.name.data,))
+
+        c.execute(
+            "SELECT rid FROM RSOs WHERE rsoname = %s",
+            (form.name.data,))
+
+        rid = c.fetchone()[0]
+        print(rid)
+
+        c.execute(
+                "INSERT INTO Admins(username, rid)"
+                "VALUES (%s, %s)",
+                (current_user.username, rid))
+
+        c.execute(
+                "INSERT INTO RSOMembers(username, rid)"
+                "VALUES (%s, %s)",
+                (current_user.username, rid))
+
+        for u in (field for field in form if 'user' in str(field.label)):
+            c.execute(
+                "INSERT INTO RSOMembers(username, rid)"
+                "VALUES (%s, %s)",
+                (u.data, rid))
+
+        warns = c.fetchwarnings()
+        if not warns:
+            db.commit()
+        else:
+            print(warns)
+    else:
+        print(form.errors)
+
+    return render_template('form.html', action='/rso/new', form=form)
