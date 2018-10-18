@@ -35,10 +35,9 @@ def signup():
             login_user(models.load_user(form.username.data))
 
         c.close()
-        # TODO: Real confirmation
         return redirect('/account/student')
 
-    return render_template('signup.html', form=form)
+    return render_template('form.html', action="/signup", form=form)
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -51,7 +50,7 @@ def login():
             login_user(models.load_user(user.username))
             return redirect('/myname')
 
-    return render_template('login.html', form=form)
+    return render_template('form.html', action="/login", form=form)
 
 
 @app.route('/locations', methods=["GET", "POST"])
@@ -99,7 +98,7 @@ def university_edit():
     else:
         print(form.errors)
 
-    return render_template('university/edit.html', form=form)
+    return render_template('form.html', action="/university/new", form=form)
 
 
 @app.route('/account/student', methods=["GET", "POST"])
@@ -121,7 +120,7 @@ def student_info():
     else:
         print(form.errors)
 
-    return render_template('account/student.html', form=form)
+    return render_template("form.html", action='/account/student', form=form)
 
 
 @app.route('/rso/new', methods=["GET", "POST"])
