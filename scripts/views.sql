@@ -1,3 +1,9 @@
+CREATE VIEW EasyUsers AS
+SELECT Users.*, Students.univid, Students.email,
+    Users.username IN (SELECT * FROM SuperUsers) AS super
+FROM Users
+LEFT JOIN Students ON Users.username = Students.username;
+
 CREATE VIEW PublicEvents AS
 SELECT *
 FROM Events

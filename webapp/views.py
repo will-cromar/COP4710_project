@@ -178,7 +178,7 @@ def rso_view(rid):
 @app.route('/rso/<rid>/join', methods=["POST"])
 @login_required
 def rso_join(rid):
-    if not current_user.univid:
+    if not current_user.is_student():
         abort(403)
 
     c = db.cursor()

@@ -3,7 +3,7 @@
         <title>Login Page</title>
     </head>
     <body>
-        {% if current_user.univid %}
+        {% if current_user.is_student() %}
         <form action="/rso/{{ rid }}/join" method="post">
             <input value="Join" type="submit" >
         </form>

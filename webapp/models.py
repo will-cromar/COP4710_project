@@ -6,9 +6,8 @@ from . import db, login_manager
 def get_user(username):
     c = db.cursor(named_tuple=True)
     c.execute(
-        "SELECT Users.*, Students.univid, Students.email FROM Users "
-        "LEFT JOIN Students ON Users.username = Students.username "
-        "WHERE Users.username = %s",
+        "SELECT * FROM EasyUsers "
+        "WHERE username = %s",
         (username,))
     user = c.fetchone()
 
@@ -26,18 +25,16 @@ class User(UserMixin):
         self.username = row.username
         self.univid = row.univid
         self.email = row.email
+        self.super = row.super
 
     def get_id(self):
         return self.username
 
-    def is_super_user(self):
-        c = db.cursor()
-        c.execute(
-            "SELECT %s IN "
-            "(SELECT SuperUsers.username FROM SuperUsers);",
-            (self.username,))
+    def is_student(self):
+        return self.univid is not None
 
-        return c.fetchone()[0] == 1
+    def is_super_user(self):
+        return self.super
 
     def get_rsos(self):
         c = db.cursor()
