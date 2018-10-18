@@ -46,3 +46,13 @@ class User(UserMixin):
             (self.username,))
 
         return c.fetchall()
+
+
+def get_universities():
+    c = db.cursor()
+    c.execute(
+        "SELECT univid, uname "
+        "FROM Universities"
+    )
+
+    return c.fetchall()

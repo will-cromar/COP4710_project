@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import (StringField, PasswordField, FloatField, IntegerField,
                      TextAreaField, SelectField)
 from wtforms.fields.html5 import DateField, TimeField
@@ -45,3 +46,11 @@ class EventForm(FlaskForm):
     cphone = StringField("Contact Phone", validators=[DataRequired()])
     cemail = StringField("Contact Email", validators=[DataRequired()])
     restriction = SelectField("Restriction", coerce=int)
+
+
+class PhotoForm(FlaskForm):
+    univid = SelectField("University", coerce=int)
+    photo = FileField("Images", validators=[
+        FileRequired(),
+        FileAllowed(['jpg', 'png'], 'Images only!')
+    ])

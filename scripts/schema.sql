@@ -98,3 +98,12 @@ CREATE TABLE UserComment(
     FOREIGN KEY (username) REFERENCES Users(username),
     FOREIGN KEY (eid) REFERENCES Events(eid)
 );
+
+CREATE TABLE Photos(
+    pid INT NOT NULL AUTO_INCREMENT,
+    univid INT,
+    b64 MEDIUMTEXT NOT NULL,
+    ftype VARCHAR(16),
+    PRIMARY KEY (pid),
+    FOREIGN KEY (univid) REFERENCES Universities(univid)
+);

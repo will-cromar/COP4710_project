@@ -1,9 +1,11 @@
+import base64
+
 from flask import render_template, redirect, abort
 from flask_login import current_user, login_required, login_user
 
 from . import app, db, models, login_manager
 from .forms import (CredentialsForm, LocationForm, UniversityForm,
-                    StudentInfoForm, RSOForm, EventForm)
+                    StudentInfoForm, RSOForm, EventForm, PhotoForm)
 
 
 @login_manager.unauthorized_handler
@@ -99,6 +101,35 @@ def university_edit():
         print(form.errors)
 
     return render_template('form.html', action="/university/new", form=form)
+
+
+@app.route('/university/photo/add', methods=["GET", "POST"])
+@login_required
+def photo_add():
+    if not current_user.is_super_user():
+        abort(403)
+
+    form = PhotoForm()
+    form.univid.choices = models.get_universities()
+    if form.validate_on_submit():
+        f = form.photo.data
+
+        c = db.cursor()
+        c.execute(
+            "INSERT INTO Photos(univid, b64, ftype)"
+            "VALUES (%s, %s, %s)",
+            (form.univid.data,
+             base64.standard_b64encode(f.read()),
+             f.mimetype))
+
+        warns = c.fetchwarnings()
+        if not warns:
+            db.commit()
+        else:
+            print(warns)
+
+    return render_template('form.html', action="/university/photo/add",
+                           fileform=True, form=form)
 
 
 @app.route('/account/student', methods=["GET", "POST"])
@@ -220,7 +251,6 @@ def rso_approve(rid):
 @app.route('/event/new', methods=["GET", "POST"])
 def event_edit():
     form = EventForm()
-    print(current_user.get_rsos())
     form.restriction.choices = ([(0, "None"), (-1, "My University")] +
                                 current_user.get_rsos())
     if form.validate_on_submit():

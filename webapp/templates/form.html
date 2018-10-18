@@ -4,7 +4,7 @@
     </head>
     <body>
         {{ form.errors }}
-        <form action="{{ action }}" method="post">
+        <form action="{{ action }}" method="post" {% if fileform %}enctype="multipart/form-data"{% endif %}>
             {% for field in form %}
                 {{ field.label }}: {{ field }}
                 <br>
