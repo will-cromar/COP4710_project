@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <title>Login Page</title>
+    </head>
+    <body>
+        {% if current_user.is_super_user() %}
+        <form action="/event/{{ eid }}/approve" method="post">
+            <input value="Approve" type="submit" >
+        </form>
+        {% endif %}
+
+    </body>
+</html>

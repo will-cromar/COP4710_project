@@ -251,3 +251,31 @@ def event_edit():
             print(warns)
 
     return render_template('form.html', action="/event/new", form=form)
+
+
+@app.route('/event/<eid>', methods=["GET", "POST"])
+@login_required
+def event_view(eid):
+    return render_template('event/view.html', eid=eid)
+
+
+@app.route('/event/<eid>/approve', methods=["POST"])
+@login_required
+def event_approve(eid):
+    if not current_user.is_super_user():
+        abort(403)
+
+    c = db.cursor()
+    c.execute(
+            "UPDATE Events "
+            "SET approved = 1 "
+            "WHERE eid = %s",
+            (eid,))
+
+    warns = c.fetchwarnings()
+    if not warns:
+        db.commit()
+    else:
+        print(warns)
+
+    return eid
