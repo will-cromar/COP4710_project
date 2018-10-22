@@ -15,7 +15,7 @@ def unauthorized():
 
 @app.route('/')
 def index():
-    return "hello"
+    return render_template("home.html", title="title")
 
 
 @app.route('/myname')
@@ -48,9 +48,8 @@ def login():
     if form.validate_on_submit():
         user = models.get_user(form.username.data,)
         if user and user.passwd == form.password.data:
-            # TODO: Log user in
             login_user(models.load_user(user.username))
-            return redirect('/myname')
+            return redirect('/')
 
     return render_template('form.html', action="/login", form=form)
 
