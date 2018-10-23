@@ -207,7 +207,14 @@ def rso_edit():
 @app.route('/rso/<rid>', methods=["GET", "POST"])
 @login_required
 def rso_view(rid):
-    return render_template('rso/view.html', rid=rid)
+    c = db.cursor(named_tuple=True)
+    c.execute("SELECT * FROM ApprovedRSOs WHERE rid=%s;", (rid,))
+    rso = c.fetchone()
+
+    c.execute("SELECT * FROM RSOEvents WHERE rsorestriction=%s", (rid,))
+    rows = c.fetchall()
+
+    return render_template('rso/view.html', rows=rows, rso=rso)
 
 
 @app.route('/rso/list', methods=["GET", "POST"])
