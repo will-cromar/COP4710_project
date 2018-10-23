@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="page-title py-3">{{ univ.uname }}</h2>
+        {% if current_user.is_super_user() %}
+        <span><a class=" btn-lg btn btn-outline-success" href="/university/photo/add" role="button">Add Photos</a></span>
+        {% endif %}
+    </div>
+    {% include "event/list_component.html" %}
+</div>
+{% endblock %}

@@ -101,8 +101,39 @@ def university_edit():
     else:
         print(form.errors)
 
+    return redirect("/university/list")
+
     return render_template('form.html', action="/university/new",
                            name="New University", form=form)
+
+
+@app.route('/university/list')
+def university_list():
+    if not current_user.is_super_user():
+        abort(403)
+
+    c = db.cursor(named_tuple=True)
+    c.execute("SELECT * FROM Universities;")
+    return render_template('university/list.html', rows=c.fetchall())
+
+
+@app.route('/university/<univid>')
+def university_view(univid):
+    if not current_user.is_super_user():
+        abort(403)
+
+    c = db.cursor(named_tuple=True)
+    c.execute("SELECT * FROM Universities WHERE univid=%s;", (univid,))
+    univ = c.fetchone()
+
+    c.execute("SELECT * FROM Photos WHERE univid=%s;", (univid,))
+    photos = c.fetchall()
+
+    c.execute("SELECT * FROM ApprovedEvents WHERE urestriction=%s;", (univid,))
+    rows = c.fetchall()
+
+    return render_template('university/view.html', univ=univ, photos=photos,
+                           rows=rows)
 
 
 @app.route('/university/photo/add', methods=["GET", "POST"])

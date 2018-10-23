@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="page-title py-3">Universities</h2>
+        {% if current_user.is_super_user() %}
+        <span><a class=" btn-lg btn btn-outline-success" href="/university/new" role="button">Add University</a></span>
+        {% endif %}
+    </div>
+<div class="table-responsive">
+<table class="table table-striped table-sm">
+<thead>
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Population</th>
+    </tr>
+</thead>
+<tbody>
+    {% for row in rows %}
+    <tr>
+        <td>{{ row.univid }}</td>
+        <td>{{ row.uname }}</td>
+        <td>{{ row.pop }} students</td>
+        <td><a href="/university/{{ row.univid }}">View</a></td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+{% endblock %}
