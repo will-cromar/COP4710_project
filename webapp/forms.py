@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import (StringField, PasswordField, FloatField, IntegerField,
-                     TextAreaField, SelectField)
+                     TextAreaField, SelectField, SubmitField)
 from wtforms.fields.html5 import DateField, TimeField
 from wtforms.validators import DataRequired, Email
 
@@ -9,6 +9,7 @@ from wtforms.validators import DataRequired, Email
 class CredentialsForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
+    submit_button = SubmitField('Submit Form')
 
 
 class LocationForm(FlaskForm):
@@ -22,11 +23,13 @@ class UniversityForm(FlaskForm):
     location_id = IntegerField('Location ID')
     description = TextAreaField('Description')
     population = IntegerField('Population')
+    submit_button = SubmitField('Submit Form')
 
 
 class StudentInfoForm(FlaskForm):
     univid = IntegerField('University ID', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
+    submit_button = SubmitField('Submit Form')
 
 
 class RSOForm(FlaskForm):
@@ -36,6 +39,7 @@ class RSOForm(FlaskForm):
     user3 = StringField('User3', validators=[DataRequired()])
     user4 = StringField('User4', validators=[DataRequired()])
     user5 = StringField('User5', validators=[DataRequired()])
+    submit_button = SubmitField('Submit Form')
 
 
 class EventForm(FlaskForm):
@@ -44,8 +48,9 @@ class EventForm(FlaskForm):
     time = TimeField("Time", validators=[DataRequired()])
     location_id = IntegerField("Location ID", validators=[DataRequired()])
     cphone = StringField("Contact Phone", validators=[DataRequired()])
-    cemail = StringField("Contact Email", validators=[DataRequired()])
+    cemail = StringField("Contact Email", validators=[DataRequired(), Email()])
     restriction = SelectField("Restriction", coerce=int)
+    submit_button = SubmitField('Submit Form')
 
 
 class PhotoForm(FlaskForm):
@@ -54,3 +59,4 @@ class PhotoForm(FlaskForm):
         FileRequired(),
         FileAllowed(['jpg', 'png'], 'Images only!')
     ])
+    submit_button = SubmitField('Submit Form')

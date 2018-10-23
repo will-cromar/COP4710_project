@@ -15,7 +15,7 @@ def unauthorized():
 
 @app.route('/')
 def index():
-    return render_template("home.html", title="title")
+    return render_template("home.html", title="Home")
 
 
 @app.route('/myname')
@@ -39,7 +39,8 @@ def signup():
         c.close()
         return redirect('/account/student')
 
-    return render_template('form.html', action="/signup", form=form)
+    return render_template('form.html', action="/signup",
+                           name="Sign up", form=form)
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -51,7 +52,8 @@ def login():
             login_user(models.load_user(user.username))
             return redirect('/')
 
-    return render_template('form.html', action="/login", form=form)
+    return render_template('form.html', action="/login",
+                           name="Log in", form=form)
 
 
 @app.route('/locations', methods=["GET", "POST"])
@@ -99,7 +101,8 @@ def university_edit():
     else:
         print(form.errors)
 
-    return render_template('form.html', action="/university/new", form=form)
+    return render_template('form.html', action="/university/new",
+                           name="New University", form=form)
 
 
 @app.route('/university/photo/add', methods=["GET", "POST"])
@@ -128,7 +131,8 @@ def photo_add():
             print(warns)
 
     return render_template('form.html', action="/university/photo/add",
-                           fileform=True, form=form)
+                           name="Add University Photo", fileform=True,
+                           form=form)
 
 
 @app.route('/account/student', methods=["GET", "POST"])
@@ -150,7 +154,8 @@ def student_info():
     else:
         print(form.errors)
 
-    return render_template("form.html", action='/account/student', form=form)
+    return render_template("form.html", action='/account/student',
+                           name="Update Student Information", form=form)
 
 
 @app.route('/rso/new', methods=["GET", "POST"])
@@ -195,7 +200,8 @@ def rso_edit():
     else:
         print(form.errors)
 
-    return render_template('form.html', action='/rso/new', form=form)
+    return render_template('form.html', action='/rso/new',
+                           name="Register RSO", form=form)
 
 
 @app.route('/rso/<rid>', methods=["GET", "POST"])
@@ -222,7 +228,7 @@ def rso_join(rid):
     else:
         print(warns)
 
-    return rid
+    return redirect("/rso/{}".format(rid))
 
 
 @app.route('/rso/<rid>/approve', methods=["POST"])
@@ -244,7 +250,7 @@ def rso_approve(rid):
     else:
         print(warns)
 
-    return rid
+    return redirect("/rso/{}".format(rid))
 
 
 @app.route('/event/new', methods=["GET", "POST"])
@@ -278,7 +284,8 @@ def event_edit():
         else:
             print(warns)
 
-    return render_template('form.html', action="/event/new", form=form)
+    return render_template('form.html', action="/event/new",
+                           name="Create event", form=form)
 
 
 @app.route('/event/<eid>', methods=["GET", "POST"])
@@ -306,4 +313,4 @@ def event_approve(eid):
     else:
         print(warns)
 
-    return eid
+    return redirect("/event/{}".format(eid))

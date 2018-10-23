@@ -4,6 +4,10 @@ app = Flask(__name__, instance_relative_config=True)
 app.config.from_object("config")
 app.config.from_pyfile("config.py")
 
+from flask_bootstrap import Bootstrap
+
+Bootstrap(app)
+
 import mysql.connector
 
 db = mysql.connector.connect(

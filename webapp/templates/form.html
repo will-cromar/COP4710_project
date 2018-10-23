@@ -1,15 +1,8 @@
-<html>
-    <head>
-        <title>Login Page</title>
-    </head>
-    <body>
-        {{ form.errors }}
-        <form action="{{ action }}" method="post" {% if fileform %}enctype="multipart/form-data"{% endif %}>
-            {% for field in form %}
-                {{ field.label }}: {{ field }}
-                <br>
-            {% endfor %}
-            <input type="submit" >
-        </form>
-    </body>
-</html>
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+{% block content %}
+<div class="container">
+    <h2>{{ name }}</h2>
+    {{ wtf.quick_form(form, button_map={'submit_button': 'primary'}) }}
+</div>
+{% endblock %}
