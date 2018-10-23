@@ -10,6 +10,12 @@ FROM RSOs JOIN Universities
 ON RSOs.univid = Universities.univid
 WHERE approved = 1;
 
+CREATE VIEW ApprovedEvents AS
+SELECT Events.*, Locations.lname
+FROM Events JOIN Locations
+ON Events.lid = Locations.lid
+WHERE approved = 1;
+
 CREATE VIEW PublicEvents AS
 SELECT *
 FROM Events

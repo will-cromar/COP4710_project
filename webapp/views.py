@@ -295,6 +295,13 @@ def event_edit():
                            name="Create event", form=form)
 
 
+@app.route('/event/list', methods=["GET", "POST"])
+def event_list():
+    c = db.cursor(named_tuple=True)
+    c.execute("SELECT * FROM ApprovedEvents;")
+    return render_template('event/list.html', rows=c.fetchall())
+
+
 @app.route('/event/<eid>', methods=["GET", "POST"])
 @login_required
 def event_view(eid):
