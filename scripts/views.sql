@@ -4,6 +4,12 @@ SELECT Users.*, Students.univid, Students.email,
 FROM Users
 LEFT JOIN Students ON Users.username = Students.username;
 
+CREATE VIEW ApprovedRSOs AS
+SELECT RSOs.*, Universities.uname
+FROM RSOs JOIN Universities
+ON RSOs.univid = Universities.univid
+WHERE approved = 1;
+
 CREATE VIEW PublicEvents AS
 SELECT *
 FROM Events

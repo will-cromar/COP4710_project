@@ -30,14 +30,17 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-            <a class="navbar-brand" href="/">Events</a>
+            <a class="navbar-brand" href="/">Trackr</a>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
+                    <a class="nav-link" href="/event/list">Events</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
+                    <a class="nav-link" href="/rso/list">RSOs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/university/list">Universities</a>
                 </li>
                 </ul>
             </div>
@@ -46,8 +49,8 @@
                 <span class="navbar-text">Logged in as {{ current_user.username }}</span>
                 <a class="btn btn-sm btn btn-outline-primary" role="button" href="/account/student">Manage Account</a>
                 {% else %}
-                <a class="btn btn-sm btn btn-outline-primary" role="button" href="/login">Log in</button>
-                <a class="btn btn-sm btn btn-outline-primary" role="button" href="/signup">Sign up</button>
+                <a class="btn btn-sm btn btn-outline-primary" role="button" href="/login">Log in</a>
+                <a class="btn btn-sm btn btn-outline-success" role="button" href="/signup">Sign up</a>
                 {% endif %}
             </div>
         </nav>

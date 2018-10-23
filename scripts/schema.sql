@@ -38,8 +38,10 @@ CREATE TABLE Students(
 CREATE TABLE RSOs(
     rid INT NOT NULL AUTO_INCREMENT,
     rsoname VARCHAR(64) UNIQUE,
+    univid INT,
     approved BOOL,
-    PRIMARY KEY (rid)
+    PRIMARY KEY (rid),
+    FORIEGN KEY (univid) REFERENCES Universities(univid)
 );
 
 CREATE TABLE Admins(

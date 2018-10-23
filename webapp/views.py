@@ -210,6 +210,13 @@ def rso_view(rid):
     return render_template('rso/view.html', rid=rid)
 
 
+@app.route('/rso/list', methods=["GET", "POST"])
+def rso_list():
+    c = db.cursor(named_tuple=True)
+    c.execute("SELECT * FROM ApprovedRSOs;")
+    return render_template('rso/list.html', rows=c.fetchall())
+
+
 @app.route('/rso/<rid>/join', methods=["POST"])
 @login_required
 def rso_join(rid):
