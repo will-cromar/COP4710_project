@@ -107,9 +107,6 @@ def university_edit():
 
 @app.route('/university/list')
 def university_list():
-    if not current_user.is_super_user():
-        abort(403)
-
     c = db.cursor(named_tuple=True)
     c.execute("SELECT * FROM Universities;")
     return render_template('university/list.html', rows=c.fetchall())
@@ -117,9 +114,6 @@ def university_list():
 
 @app.route('/university/<univid>')
 def university_view(univid):
-    if not current_user.is_super_user():
-        abort(403)
-
     c = db.cursor(named_tuple=True)
     c.execute("SELECT * FROM Universities WHERE univid=%s;", (univid,))
     univ = c.fetchone()
