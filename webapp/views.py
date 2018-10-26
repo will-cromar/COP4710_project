@@ -5,7 +5,8 @@ from flask_login import current_user, login_required, login_user
 
 from . import app, db, models, login_manager
 from .forms import (CredentialsForm, LocationForm, UniversityForm,
-                    StudentInfoForm, RSOForm, EventForm, PhotoForm)
+                    StudentInfoForm, RSOForm, EventForm, PhotoForm,
+                    RatingForm, CommentForm)
 
 
 @login_manager.unauthorized_handler
@@ -333,17 +334,72 @@ def event_edit():
                            name="Create event", form=form)
 
 
-@app.route('/event/list', methods=["GET", "POST"])
+@app.route('/event/list')
 def event_list():
     c = db.cursor(named_tuple=True)
     c.execute("SELECT * FROM ApprovedEvents;")
     return render_template('event/list.html', rows=c.fetchall())
 
 
-@app.route('/event/<eid>', methods=["GET", "POST"])
-@login_required
+@app.route('/event/<eid>')
 def event_view(eid):
-    return render_template('event/view.html', eid=eid)
+    c = db.cursor(named_tuple=True)
+    c.execute("SELECT * FROM ApprovedEvents WHERE eid=%s;", (eid,))
+    event = c.fetchone()
+    print(event)
+
+    rating = RatingForm()
+    comment = CommentForm()
+
+    c.execute("SELECT * FROM UserComment WHERE eid=%s ORDER BY cid;", (eid,))
+    comments = c.fetchall()
+
+    return render_template('event/view.html', rating=rating,
+                           comment_form=comment, comments=comments,
+                           event=event)
+
+
+@app.route('/event/<eid>/rating', methods=["POST"])
+@login_required
+def event_rating(eid):
+    rating = RatingForm()
+
+    if rating.validate_on_submit():
+        c = db.cursor()
+        c.execute("INSERT INTO UserRating VALUES(%s, %s, %s)",
+                  (current_user.username, eid, rating.rating.data))
+
+        warns = c.fetchwarnings()
+        if not warns:
+            db.commit()
+        else:
+            return "do better"
+
+        return redirect('/event/{}'.format(eid))
+
+    return str(rating.errors)
+
+
+@app.route('/event/<eid>/comment', methods=["POST"])
+@login_required
+def event_comment(eid):
+    comment = CommentForm()
+
+    if comment.validate_on_submit():
+        c = db.cursor()
+        c.execute("INSERT INTO UserComment(username, eid, comment) "
+                  "VALUES(%s, %s, %s)",
+                  (current_user.username, eid, comment.comment.data))
+
+        warns = c.fetchwarnings()
+        if not warns:
+            db.commit()
+        else:
+            return "do better"
+
+        return redirect('/event/{}'.format(eid))
+
+    return str(comment.errors)
 
 
 @app.route('/event/<eid>/approve', methods=["POST"])

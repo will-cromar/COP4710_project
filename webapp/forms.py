@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import (StringField, PasswordField, FloatField, IntegerField,
-                     TextAreaField, SelectField, SubmitField)
+                     TextAreaField, SelectField, SubmitField, RadioField)
 from wtforms.fields.html5 import DateField, TimeField
 from wtforms.validators import DataRequired, Email
 
@@ -60,3 +60,14 @@ class PhotoForm(FlaskForm):
         FileAllowed(['jpg', 'png'], 'Images only!')
     ])
     submit_button = SubmitField('Submit Form')
+
+
+class RatingForm(FlaskForm):
+    rating = RadioField("Rating", choices=[
+        (i, str(i)) for i in range(1, 6)], coerce=int)
+    submit_button = SubmitField("Submit Rating")
+
+
+class CommentForm(FlaskForm):
+    comment = TextAreaField("Comment")
+    submit_button = SubmitField("Submit Comment")
