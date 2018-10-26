@@ -57,7 +57,7 @@ def login():
                            name="Log in", form=form)
 
 
-@app.route('/locations', methods=["GET", "POST"])
+@app.route('/location/new', methods=["GET", "POST"])
 def locations():
     form = LocationForm()
     if form.validate_on_submit():
@@ -72,9 +72,7 @@ def locations():
         else:
             print(warns)
 
-        return redirect("/")
-    else:
-        print(form.errors)
+        return redirect("/event/new")
 
     return render_template('locations.html', form=form)
 
@@ -333,7 +331,7 @@ def event_edit():
 
         return redirect("/event/list")
 
-    return render_template('form.html', action="/event/new",
+    return render_template('event/new.html', action="/event/new",
                            name="Create event", form=form)
 
 

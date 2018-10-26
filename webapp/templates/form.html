@@ -4,5 +4,7 @@
 <div class="container">
     <h2 class="py-3">{{ name }}</h2>
     {{ wtf.quick_form(form, button_map={'submit_button': 'primary'}) }}
+    {% block extra %}
+    {% endblock %}
 </div>
 {% endblock %}
