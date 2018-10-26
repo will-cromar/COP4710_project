@@ -426,3 +426,35 @@ def event_approve(eid):
         print(warns)
 
     return redirect("/event/{}".format(eid))
+
+
+@app.route('/comment/edit/<cid>', methods=["GET", "POST"])
+@login_required
+def comment_edit(cid):
+    c = db.cursor(named_tuple=True)
+    c.execute("SELECT * FROM UserComment "
+              "WHERE cid=%s;", (cid,))
+    comment = c.fetchone()
+
+    if current_user.username != comment.username:
+        abort(403)
+
+    form = CommentForm()
+    if form.validate_on_submit():
+        c.execute(
+            "UPDATE UserComment "
+            "SET comment = %s "
+            "WHERE cid = %s",
+            (form.comment.data, comment.cid))
+
+        warns = c.fetchwarnings()
+        if not warns:
+            db.commit()
+        else:
+            print(warns)
+
+        return redirect('/event/{}'.format(comment.eid))
+
+    return render_template('comment/edit.html', form=form,
+                           action="/comment/new", comment=comment,
+                           name="Edit comment #{}".format(comment.cid))

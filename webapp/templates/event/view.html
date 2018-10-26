@@ -61,7 +61,10 @@ crossorigin=""></script>
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{ comment.username }} says...</h5>
-                <p class="card-text">{{ comment.comment }}</p>                
+                <p class="card-text">{{ comment.comment }}</p>
+                {% if comment.username == current_user.username %}
+                <a href="/comment/edit/{{ comment.cid }}" class="btn btn-outline-primary btn-sm">Edit</a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -79,4 +82,5 @@ crossorigin=""></script>
     marker.bindPopup("{{ event.lname }}").openPopup();
     </script>
 </div>
+<br>
 {% endblock %}

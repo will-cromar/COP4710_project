@@ -1,0 +1,6 @@
+{% extends "form.html" %}
+{% block extra %}
+<script>
+document.getElementById("comment").value = "{{ comment.comment }}";
+</script>
+{% endblock %}
