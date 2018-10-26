@@ -56,3 +56,13 @@ def get_universities():
     )
 
     return c.fetchall()
+
+
+def get_locations():
+    c = db.cursor()
+    c.execute(
+        "SELECT lid, lname "
+        "FROM Locations"
+    )
+
+    return c.fetchall()

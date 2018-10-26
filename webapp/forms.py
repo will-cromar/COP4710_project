@@ -20,14 +20,14 @@ class LocationForm(FlaskForm):
 
 class UniversityForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
-    location_id = IntegerField('Location ID')
+    location_id = SelectField('Location', coerce=int)
     description = TextAreaField('Description')
     population = IntegerField('Population')
     submit_button = SubmitField('Submit Form')
 
 
 class StudentInfoForm(FlaskForm):
-    univid = IntegerField('University ID', validators=[DataRequired()])
+    univid = SelectField('University', coerce=int)
     email = StringField('Email', validators=[DataRequired(), Email()])
     submit_button = SubmitField('Submit Form')
 
@@ -46,7 +46,7 @@ class EventForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     date = DateField("Date", format='%Y-%m-%d', validators=[DataRequired()])
     time = TimeField("Time", validators=[DataRequired()])
-    location_id = IntegerField("Location ID", validators=[DataRequired()])
+    location_id = SelectField('Location', coerce=int)
     cphone = StringField("Contact Phone", validators=[DataRequired()])
     cemail = StringField("Contact Email", validators=[DataRequired(), Email()])
     restriction = SelectField("Restriction", coerce=int)

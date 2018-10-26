@@ -86,6 +86,7 @@ def university_edit():
         abort(403)
 
     form = UniversityForm()
+    form.location_id.choices = models.get_locations()
     if form.validate_on_submit():
         c = db.cursor()
         c.execute(
@@ -99,10 +100,8 @@ def university_edit():
             db.commit()
         else:
             print(warns)
-    else:
-        print(form.errors)
 
-    return redirect("/university/list")
+        return redirect("/university/list")
 
     return render_template('form.html', action="/university/new",
                            name="New University", form=form)
@@ -171,6 +170,7 @@ def photo_add():
 @login_required
 def student_info():
     form = StudentInfoForm()
+    form.univid.choices = models.get_universities()
     if form.validate_on_submit():
         c = db.cursor()
         c.execute(
@@ -302,6 +302,7 @@ def rso_approve(rid):
 @app.route('/event/new', methods=["GET", "POST"])
 def event_edit():
     form = EventForm()
+    form.location_id.choices = models.get_locations()
     form.restriction.choices = ([(0, "None"), (-1, "My University")] +
                                 current_user.get_rsos())
     if form.validate_on_submit():
@@ -330,6 +331,8 @@ def event_edit():
         else:
             print(warns)
 
+        return redirect("/event/list")
+
     return render_template('form.html', action="/event/new",
                            name="Create event", form=form)
 
@@ -344,7 +347,10 @@ def event_list():
 @app.route('/event/<eid>')
 def event_view(eid):
     c = db.cursor(named_tuple=True)
-    c.execute("SELECT * FROM ApprovedEvents WHERE eid=%s;", (eid,))
+    c.execute("SELECT Events.*, Locations.lname "
+              "FROM Events JOIN Locations "
+              "ON Events.lid = Locations.lid "
+              "WHERE eid=%s;", (eid,))
     event = c.fetchone()
     print(event)
 
