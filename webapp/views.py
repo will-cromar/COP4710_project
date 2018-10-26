@@ -345,12 +345,12 @@ def event_list():
 @app.route('/event/<eid>')
 def event_view(eid):
     c = db.cursor(named_tuple=True)
-    c.execute("SELECT Events.*, Locations.lname "
+    c.execute("SELECT Events.*, Locations.lname, "
+              "Locations.latitude, Locations.longitude "
               "FROM Events JOIN Locations "
               "ON Events.lid = Locations.lid "
               "WHERE eid=%s;", (eid,))
     event = c.fetchone()
-    print(event)
 
     rating = RatingForm()
     comment = CommentForm()

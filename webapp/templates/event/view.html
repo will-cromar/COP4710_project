@@ -1,9 +1,19 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf%}
 {% block headinclude %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+crossorigin=""></script>
 <style>
 .rating .radio {
     margin-right: 12px;
+}
+#mapid {
+    min-height: 300px;
+    height: 100%;
 }
 </style>
 {% endblock %}
@@ -17,25 +27,28 @@
         </form>
         {% endif %}
     </div>
-    <div class="d-flex justify-content-around align-items-center">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">When</h5>
-                <p class="card-text">Date: {{ event.dtime.date() }}</p>
-                <p class="card-text">Time: {{ event.dtime.time() }}</p>
-                <a href="#" class="btn btn-primary">Add to calendar</a>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">When</h5>
+                    <p class="card-text">Date: {{ event.dtime.date() }}</p>
+                    <p class="card-text">Time: {{ event.dtime.time() }}</p>
+                    <a href="#" class="btn btn-primary">Add to calendar</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Contact</h5>
+                    <p class="card-text">Phone: {{ event.cphone }}</p>
+                    <p class="card-text">E-mail: {{ event.cemail }}</p>
+                    <a href="#" class="btn btn-primary">Send a message</a>
+                </div>
             </div>
         </div>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Contact</h5>
-                <p class="card-text">Phone: {{ event.cphone }}</p>
-                <p class="card-text">E-mail: {{ event.cemail }}</p>
-                <a href="#" class="btn btn-primary">Send a message</a>
-            </div>
+        <div class="col-md-8">
+            <div id="mapid"></div>
         </div>
-    <!-- TODO: location map -->
-
     </div>
 
     <div>
@@ -54,5 +67,16 @@
         {% endfor %}
         {{ wtf.quick_form(comment_form, action=('/event/%s/comment'%event.eid), button_map={'submit_button': 'primary'})}}
     </div>
+
+    <script>
+    var mymap = L.map('mapid').setView(["{{ event.latitude }}", "{{ event.longitude }}"], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(mymap);
+
+    var marker = L.marker(["{{ event.latitude }}", "{{ event.longitude }}"]).addTo(mymap);
+    marker.bindPopup("{{ event.lname }}").openPopup();
+    </script>
 </div>
 {% endblock %}
