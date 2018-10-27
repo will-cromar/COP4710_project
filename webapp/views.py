@@ -1,6 +1,6 @@
 import base64
 
-from flask import render_template, redirect, abort
+from flask import request, render_template, redirect, abort
 from flask_login import current_user, login_required, login_user
 
 from . import app, db, models, login_manager
@@ -331,8 +331,27 @@ def event_edit():
 
 @app.route('/event/list')
 def event_list():
+    f = request.args.get('filter')
     c = db.cursor(named_tuple=True)
-    c.execute("SELECT * FROM ApprovedEvents;")
+    if current_user.is_authenticated and f == "rso":
+        c.execute("SELECT * FROM ApprovedEvents "
+                  "WHERE rsorestriction IN ("
+                  "SELECT rid FROM RSOMembers "
+                  "WHERE username = %s"
+                  ");", (current_user.username,))
+    elif current_user.is_authenticated and f == "private":
+        c.execute("SELECT * FROM ApprovedEvents "
+                  "WHERE urestriction IN ("
+                  "SELECT univid FROM Students "
+                  "WHERE username = %s"
+                  ");", (current_user.username,))
+    elif f == "public":
+        c.execute("SELECT * FROM ApprovedEvents "
+                  "WHERE urestriction IS NULL AND "
+                  "rsorestriction IS NULL;")
+    else:
+        c.execute("SELECT * FROM ApprovedEvents;")
+
     return render_template('event/list.html', rows=c.fetchall())
 
 
