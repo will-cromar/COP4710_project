@@ -6,6 +6,8 @@
             <th>Title</th>
             <th>Location</th>
             <th>Date/time</th>
+            <th>Scope</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -15,6 +17,7 @@
             <td>{{ row.title }}</td>
             <td>{{ row.lname }}</td>
             <td>{{ row.dtime }}</td>
+            <td>{{ row.rsoname or row.uname or "Public" }}</td>
             <td><a href="/event/{{row.eid}}">View</a></td>
         </tr>
         {% endfor %}

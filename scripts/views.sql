@@ -10,27 +10,14 @@ FROM RSOs JOIN Universities
 ON RSOs.univid = Universities.univid
 WHERE approved = 1;
 
+CREATE VIEW EventsInfo AS 
+SELECT Events.*, Universities.uname, RSOs.rsoname,
+    Locations.lname, Locations.latitude, Locations.longitude
+FROM Events
+JOIN Locations ON Events.lid = Locations.lid
+LEFT JOIN RSOs ON Events.rsorestriction = RSOs.rid
+LEFT JOIN Universities ON Events.urestriction = Universities.univid;
+
 CREATE VIEW ApprovedEvents AS
-SELECT Events.*, Locations.lname
-FROM Events JOIN Locations
-ON Events.lid = Locations.lid
+SELECT * FROM EventsInfo
 WHERE approved = 1;
-
-CREATE VIEW PublicEvents AS
-SELECT *
-FROM Events
-WHERE approved = 1 AND
-    urestriction IS NULL AND
-    rsorestriction IS NULL;
-
-CREATE VIEW PrivateEvents AS
-SELECT *
-FROM Events
-WHERE approved = 1 AND
-    urestriction IS NOT NULL;
-
-CREATE VIEW RSOEvents AS
-SELECT *
-FROM Events
-WHERE approved = 1 AND
-    rsorestriction IS NOT NULL;

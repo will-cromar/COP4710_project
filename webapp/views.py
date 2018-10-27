@@ -235,7 +235,7 @@ def rso_view(rid):
     c.execute("SELECT * FROM ApprovedRSOs WHERE rid=%s;", (rid,))
     rso = c.fetchone()
 
-    c.execute("SELECT * FROM RSOEvents WHERE rsorestriction=%s", (rid,))
+    c.execute("SELECT * FROM ApprovedEvents WHERE rsorestriction=%s", (rid,))
     rows = c.fetchall()
 
     return render_template('rso/view.html', rows=rows, rso=rso)
@@ -349,6 +349,8 @@ def event_list():
         c.execute("SELECT * FROM ApprovedEvents "
                   "WHERE urestriction IS NULL AND "
                   "rsorestriction IS NULL;")
+    elif current_user.is_super_user() and f == "all":
+        c.execute("SELECT * FROM EventsInfo;")
     else:
         c.execute("SELECT * FROM ApprovedEvents;")
 
