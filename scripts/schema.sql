@@ -55,6 +55,8 @@ CREATE TABLE Admins(
 CREATE TABLE Events(
     eid INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(64),
+    descr TEXT,
+    category VARCHAR(64),
     dtime DATETIME,
     lid INT,
     cphone CHAR(10),
