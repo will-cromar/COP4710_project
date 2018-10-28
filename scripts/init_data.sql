@@ -1,4 +1,4 @@
-INSERT INTO Locations(lname, latitude, longitude) VALUES ('UCF', 28.6012, -81.2011);
+INSERT INTO Locations(lname, latitude, longitude) VALUES ('UCF Center', 28.6012, -81.2011);
 INSERT INTO Universities(uname, primarylid, pop, descr) 
     VALUES ('UCF', 1, 65000, 'University of Central Florida');
 

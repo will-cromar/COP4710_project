@@ -41,7 +41,7 @@ CREATE TABLE RSOs(
     univid INT,
     approved BOOL,
     PRIMARY KEY (rid),
-    FORIEGN KEY (univid) REFERENCES Universities(univid)
+    FOREIGN KEY (univid) REFERENCES Universities(univid)
 );
 
 CREATE TABLE Admins(
