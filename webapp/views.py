@@ -310,12 +310,13 @@ def event_edit():
         dtime = str(form.date.data) + " " + str(form.time.data)
         c = db.cursor()
         c.execute(
-            "INSERT INTO Events(title, dtime, lid, cphone, cemail, "
-            "urestriction, rsorestriction, approved) "
-            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-            (form.title.data, dtime, form.location_id.data,
-                form.cphone.data, form.cemail.data, urestriction,
-                rsorestriction, rsorestriction is not None))
+            "INSERT INTO Events(title, category, descr, dtime, lid, cphone, "
+            "cemail, urestriction, rsorestriction, approved)"
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            (form.title.data, form.category.data, form.description.data,
+                dtime, form.location_id.data, form.cphone.data,
+                form.cemail.data, urestriction, rsorestriction,
+                rsorestriction is not None))
 
         warns = c.fetchwarnings()
         if not warns:

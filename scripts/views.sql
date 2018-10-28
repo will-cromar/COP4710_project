@@ -16,7 +16,8 @@ SELECT Events.*, Universities.uname, RSOs.rsoname,
 FROM Events
 JOIN Locations ON Events.lid = Locations.lid
 LEFT JOIN RSOs ON Events.rsorestriction = RSOs.rid
-LEFT JOIN Universities ON Events.urestriction = Universities.univid;
+LEFT JOIN Universities ON Events.urestriction = Universities.univid
+ORDER BY eid;
 
 CREATE VIEW ApprovedEvents AS
 SELECT * FROM EventsInfo

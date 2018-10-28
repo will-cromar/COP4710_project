@@ -44,6 +44,8 @@ class RSOForm(FlaskForm):
 
 class EventForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
+    category = StringField("Category", validators=[DataRequired()])
+    description = TextAreaField("Description", validators=[DataRequired()])
     date = DateField("Date", format='%Y-%m-%d', validators=[DataRequired()])
     time = TimeField("Time", validators=[DataRequired()])
     location_id = SelectField('Location', coerce=int)
