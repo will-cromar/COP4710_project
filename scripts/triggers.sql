@@ -4,7 +4,8 @@ FOR EACH ROW
 UPDATE RSOs 
 SET approved = (SELECT COUNT(*) > 4
                 FROM RSOMembers R
-                WHERE R.rid = rid);
+                WHERE R.rid = rid)
+WHERE RSOs.rid = rid;
 
 CREATE TRIGGER unapproverso
 AFTER DELETE ON RSOMembers
@@ -12,7 +13,8 @@ FOR EACH ROW
 UPDATE RSOs 
 SET approved = (SELECT COUNT(*) > 4
                 FROM RSOMembers R
-                WHERE R.rid = rid);
+                WHERE R.rid = rid)
+WHERE RSOs.rid = rid;
 
 
 
