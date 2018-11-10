@@ -6,7 +6,9 @@ CREATE TABLE Users(
 
 CREATE TABLE SuperUsers(
     username VARCHAR(32),
-    PRIMARY KEY (username)
+    PRIMARY KEY (username),
+    FOREIGN KEY (username) REFERENCES Users(username)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Locations(
@@ -32,6 +34,8 @@ CREATE TABLE Students(
     univid INT NOT NULL,
     email VARCHAR(64),
     PRIMARY KEY (username),
+    FOREIGN KEY (username) REFERENCES Users(username)
+        ON DELETE CASCADE,
     FOREIGN KEY (univid) REFERENCES Universities(univid)
 );
 
@@ -39,17 +43,20 @@ CREATE TABLE RSOs(
     rid INT NOT NULL AUTO_INCREMENT,
     rsoname VARCHAR(64) UNIQUE,
     univid INT,
-    approved BOOL,
+    approved BOOL DEFAULT 0,
     PRIMARY KEY (rid),
     FOREIGN KEY (univid) REFERENCES Universities(univid)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Admins(
     username VARCHAR(32),
     rid INT,
     PRIMARY KEY (username, rid),
-    FOREIGN KEY (username) REFERENCES Students(username),
+    FOREIGN KEY (username) REFERENCES Students(username)
+        ON DELETE CASCADE,
     FOREIGN KEY (rid) REFERENCES RSOs(rid)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Events(
@@ -66,19 +73,20 @@ CREATE TABLE Events(
     approved BOOL DEFAULT 0,
     PRIMARY KEY (eid),
     FOREIGN KEY (lid) REFERENCES Locations(lid),
-    FOREIGN KEY (urestriction) REFERENCES Universities(univid),
-    FOREIGN KEY (rsorestriction) REFERENCES RSOs(rid),
-
-    -- Can't be both a private and an RSO event
-    CHECK (urestriction = NULL or rsorestriction = NULL)
+    FOREIGN KEY (urestriction) REFERENCES Universities(univid)
+        ON DELETE CASCADE,
+    FOREIGN KEY (rsorestriction) REFERENCES RSOs(rid)
+        ON DELETE CASCADE,
 );
 
 CREATE TABLE RSOMembers(
     username VARCHAR(32),
     rid INT,
     PRIMARY KEY (username, rid),
-    FOREIGN KEY (username) REFERENCES Students(username),
+    FOREIGN KEY (username) REFERENCES Students(username)
+        ON DELETE CASCADE,
     FOREIGN KEY (rid) REFERENCES RSOs(rid)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE UserRating(
@@ -86,11 +94,10 @@ CREATE TABLE UserRating(
     eid INT,
     rating INT,
     PRIMARY KEY (username, eid),
-    FOREIGN KEY (username) REFERENCES Users(username),
-    FOREIGN KEY (eid) REFERENCES Events(eid),
-
-    -- 1 to 5 star rating
-    CHECK (rating > 0 AND rating > 1)
+    FOREIGN KEY (username) REFERENCES Users(username)
+        ON DELETE CASCADE,
+    FOREIGN KEY (eid) REFERENCES Events(eid)
+        ON DELETE CASCADE,
 );
 
 CREATE TABLE UserComment(
@@ -99,8 +106,10 @@ CREATE TABLE UserComment(
     eid INT,
     comment TEXT,
     PRIMARY KEY (cid),
-    FOREIGN KEY (username) REFERENCES Users(username),
+    FOREIGN KEY (username) REFERENCES Users(username)
+        ON DELETE CASCADE,
     FOREIGN KEY (eid) REFERENCES Events(eid)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Photos(
@@ -110,4 +119,5 @@ CREATE TABLE Photos(
     ftype VARCHAR(16),
     PRIMARY KEY (pid),
     FOREIGN KEY (univid) REFERENCES Universities(univid)
+        ON DELETE CASCADE
 );

@@ -189,9 +189,9 @@ def rso_edit():
     if form.validate_on_submit():
         c = db.cursor()
         c.execute(
-            "INSERT INTO RSOs(rsoname, approved)"
-            "VALUES (%s, 0)",
-            (form.name.data,))
+            "INSERT INTO RSOs(rsoname, approved, univid)"
+            "VALUES (%s, 0, %s)",
+            (form.name.data, current_user.univid))
 
         c.execute(
             "SELECT rid FROM RSOs WHERE rsoname = %s",
@@ -221,8 +221,8 @@ def rso_edit():
             db.commit()
         else:
             print(warns)
-    else:
-        print(form.errors)
+
+        return redirect("/rso/list".format(rid))
 
     return render_template('form.html', action='/rso/new',
                            name="Register RSO", form=form)
@@ -361,10 +361,7 @@ def event_list():
 @app.route('/event/<eid>')
 def event_view(eid):
     c = db.cursor(named_tuple=True)
-    c.execute("SELECT Events.*, Locations.lname, "
-              "Locations.latitude, Locations.longitude "
-              "FROM Events JOIN Locations "
-              "ON Events.lid = Locations.lid "
+    c.execute("SELECT * FROM ApprovedEvents "
               "WHERE eid=%s;", (eid,))
     event = c.fetchone()
 

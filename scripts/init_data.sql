@@ -16,3 +16,11 @@ INSERT INTO Users VALUES ('user5', 'password');
 INSERT INTO Students(username, univid, email) VALUES ('user5', 1, 'someone@fake.ucf.edu');
 INSERT INTO Users VALUES ('user6', 'password');
 INSERT INTO Students(username, univid, email) VALUES ('user6', 1, 'someone@fake.ucf.edu');
+
+INSERT INTO RSOs(rsoname, univid) VALUES ("COP 4710", 1);
+INSERT INTO RSOMembers VALUES ('user1', 1);
+INSERT INTO RSOMembers VALUES ('user2', 1);
+INSERT INTO RSOMembers VALUES ('user3', 1);
+INSERT INTO RSOMembers VALUES ('user4', 1);
+INSERT INTO RSOMembers VALUES ('user5', 1);
+INSERT INTO RSOMembers VALUES ('user6', 1);
