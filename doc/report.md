@@ -21,25 +21,23 @@ The database accessed from the backend server through the official MySQL connect
 
 Figure \ref{architecture} shows an overview of the application's architecture.
 
-![Overview of application's architecture \label{architecture}](doc/img/overview.png){width=50%}
+![Overview of application's architecture. \label{architecture}](doc/img/overview.png){width=50%}
+
+\clearpage
 
 # Database
 
 ## Design
 
-The relational model used for the database is shown in Figure \ref{er_diagram}. Most of the design of the data model flowed naturally from the requirements of the project, but there are a few key areas where trade-offs had to be analyzed and important design decisions had to be made. These decisions are covered in the following sections.
+The relational model used for the database is shown in Figure \ref{er_diagram}. Most of the design of the data model flowed naturally from the requirements of the project, but there are a few key areas where trade-offs had to be analyzed and important design decisions had to be made. These decisions are covered in the following sections. This section also introduced some new constraints and generalizes project requirements to make the application more realistic.
 
-![ER Model for events website. \label{er_diagram}](doc/img/er_diagram.png)
+![ER Model for events website. (rotated) \label{er_diagram}](doc/img/er_diagram.png)
 
-There are multiple valid ways to design the database, and my final design reflects my own personal experiences and preferences in software engineering. In order to better demonstrate why I made the decisions and trade-offs that I did, I provide an outline of my design philosophy:
-
-1. Design the database schema to be easy to mutate without introducing anomalies.
-1. Write views to make querying the database easier for the client when following (1) makes the data harder to read.
-1. Don’t take (1) to an extreme: views should be simple, understandable, and easy to update for schema changes.
+There are multiple valid ways to design the database, and my final design reflects my own personal experiences and preferences in software engineering. As much as possible, I design the database schema to be easy to mutate without introducing anomalies and write views to make querying the database easier for the client.
 
 ### Event
 
-There are three event types given in the project requirements: public, private, and RSO events. Nearly all attributes of the events are common across all three types.These arguably form an inheritance hierarchy, where there’s a supertype Event and three subtypes that add attributes. There are three conventional ways to implement such a hierarchy:
+There are three event types given in the project requirements: public, private, and RSO events. Nearly all attributes of the events are common across all three types. These arguably form an inheritance hierarchy, where there’s a supertype Event and three subtypes that add attributes. There are three conventional ways to implement such a hierarchy:
 
 1. Store each type of event in its own separate table. This makes querying all events significantly more difficult.
 1. Store all three types in the same table, and only use some attributes for certain types of events. This imposes a risk of setting conflicting options (i.e. making an event that’s both RSO and private type), but makes querying all events quite easy.
@@ -56,21 +54,11 @@ A similar decision is required to accurately represent the three user types: stu
 1. `Users` can enter their university name and student e-mail to become a _student_ in the Students table.
 1. A student can request to create an RSO, and will be added to the Admins table. Note that this design permits multiple admins for one RSO and allows a student to administer multiple RSOs. This new RSO is approved by a super admin.
 
-The information in these tables is combined into one view, that has the users credentials, nullable student information, and a flag indicating whether they are a _super admin_.
+The information in these tables is combined into one view that has the users credentials, nullable student information, and a flag indicating whether they are a _super admin_.
 
 ### Location
 
 The location of an event can either be stored separately in some table, or all of that information can be embedded in both Events and Universities. I chose the former option to facilitate easier location selection, where a user can create an event by choosing the name of the location from a list rather than having to select off of a map every time. However, an interactive map is still available to add new location entries (see Section \ref{interactive_map}).
-
-### Other Decisions
-
-A number of other minor design decisions are listed here:
-
-- The range of a rating (1 to 5) is enforced by a CHECK constraint.
-- RSOs have an approved field, and only move to the `ApprovedRSOs` view when the _SuperAdmin_ presses the “Approved” button.
-- Images of universities can be uploaded by super admins, which are encoded as base 64 in the database.
-- A student seeking to create an RSO must provide the names of 5 other students at the time of creation in the interface.
-- All ID values that act as primary keys are auto-incremented integers.
 
 ## Relational Schema
 
@@ -106,7 +94,7 @@ ALTER TABLE Events ADD CONSTRAINT UNIQUE(dtime, lid);
 
 ![Attempting to insert two events at the same place and time fails, but two events at the same time and different places is allowed \label{fig_overlap}](doc/img/overlapping_event.png)
 
-### Disabling RSOs with Fewer than 5 Members
+### Activating and Deactivating RSOs
 
 Two `TRIGGER` constraints are used to activate RSOs with enough members and deactivate those the too few members. See Figure \ref{fig_trigger} for a demonstration.
 
@@ -130,7 +118,7 @@ SET approved = (SELECT COUNT(*) > 4
 WHERE RSOs.rid = rid;
 ```
 
-![The RSO is activated when the fifth member is added and deactivated when he/she is removed. \label{fig_trigger}](doc/img/rso_triggers.png)
+![The RSO is activated when the fifth member is added and deactivated when they are removed. \label{fig_trigger}](doc/img/rso_triggers.png)
 
 ### Non-admin Creating RSO Events
 
@@ -144,9 +132,11 @@ Example test data that can be used to initialize the database can be found in `s
 
 ![An example of creating a new RSO and adding a member and admin to it.](doc/img/example_rso.png)
 
-![An example of creating a new event, adding a comment to it, and editing that comment.](doc/img/example_comments.png)
+![An example of creating a new event, adding a comment to it, and editing that comment. (rotated)](doc/img/example_comments.png)
 
-![Examples of querying public, RSO, and private events (respectively) that are visible to `user1`](doc/img/example_event_queries.png)
+![Examples of querying public, RSO, and private events (respectively) that are visible to `user1`. (rotated)](doc/img/example_event_queries.png)
+
+\clearpage
 
 # Graphical User Interface
 
@@ -160,15 +150,17 @@ The following series of figures demonstrate a typical path through the applicati
 
 ![Any student can request to create an event private to their university. Note that the form also has client-side input validation.](doc/img/event_form.png)
 
-![Once a super-admin approved the private event, the user can see it in their list of events](doc/img/small_event_list.png)
+![Once a super-admin approved the private event, the user can see it in their list of events.](doc/img/small_event_list.png)
 
-![The user can click "View" to see all of the details of the event, as well as leave a comment](doc/img/event_details.png)
+![The user can click "View" to see all of the details of the event, as well as leave a comment.](doc/img/event_details.png)
 
 ![Users also have the option to edit their comments.](doc/img/event_comment.png)
 
-![The new user can request to create an RSO with 5 of their friends and will become that RSO's first admin](doc/img/new_rso.png)
+![The new user can request to create an RSO with 5 of their friends and will become that RSO's first admin.](doc/img/new_rso.png)
 
 ![Now that the user is an admin of an RSO, they can create an RSO event for it.](doc/img/rso_event.png)
+
+\clearpage
 
 # Advanced Features
 
@@ -184,7 +176,7 @@ All event details pages include an option to share the event on Twitter. See Fig
 
 ## UCF Event Feed Scraping
 
-A Python script is included in the `scripts/` directory that fetches a week worth of events from the official UCF events website and generate the `INSERT` statements to adapt the data to my database design. This can be used to populate the database with real test data. An list of real events is shown in Figure \ref{ucf_events}.
+A Python script is included in the `scripts/` directory that fetches a week worth of events from the official UCF events website and generates the `INSERT` statements to adapt the data to my database design. This can be used to populate the database with real test data. An list of real events is shown in Figure \ref{ucf_events}.
 
 ![Real events from UCF can be scraped from the website and added to this application. \label{ucf_events}](doc/img/ucf_events.png)
 
@@ -198,6 +190,26 @@ An example of a map with a fixed in is shown in Figure \ref{responsive}. The gra
 
 ## University Album {#university_album}
 
-The application implements a University View page where users can see a list of all of the events for that university that also features an automatically scrolling list of photos, which are added by the super-admins. A screenshot is shown in \ref{ucf_screenshot}.
+The application implements a University View page where users can see a list of all of the events for that university that also features an automatically scrolling list of photos, which are added by the super-admins. A screenshot is shown in Figure \ref{ucf_screenshot}.
 
 ![The university view page features a list of all events for that university and a slideshow. \label{ucf_screenshot}](doc/img/ucf_screenshot.png)
+
+\clearpage
+
+# Conclusion
+
+## Performance
+
+The database is quite responsive, since critical views that involve joins are computed ahead of time. In order to speed up the database, it would probably be worthwhile to index events by their restrictions (university and RSO) to speed up lookups of Private and RSO events, which have to search on those attributes.
+
+## Areas for Improvement
+
+If I were to redo the project, I would decompose the database differently. In particular I would flatten `Users` and `SuperUsers` such that there is an attribute on `Users` that indicates whether that user is a super-admin. Likewise, I would flatten `Admins` and `RSOMembers` such that there is an attribute on `RSOMembers` that indicates which members are also admins. Then, a view can be constructed on that table to filter for admins.
+
+## Future Work
+
+Although the application is resistant to XSS and CSRF attacks, there remain some significant security vulnerabilities in the application. Most significantly, passwords are not hashed, so a compromised database would leak real passwords to the attacker. I would also integrate additional social sharing options beyond just Twitter.
+
+## Challenges
+
+Building this application turned out to be considerably more work than I expected, although I found all of it to be pretty straightforward. I used SQL everywhere to meet the project goal of teaching SQL. However, I found this to be much more error-prone than necessary. Since all queries were written by hand and embedded in the application, typos in table or column names could not be caught with static analysis tools (e.g. linters) and always surfaced at runtime. In my industry experience, developers nearly always use ORM (object-relational mapper) libraries to define their tables (rather than directly using `CREATE TABLE`) and only explicitly write out queries in SQL for performance reasons. This lets them do most simple operations using constructs defined in the application language where static analysis tools can check their work. If I were to start a real-world project from scratch, I would certainly use an ORM and avoid embedded queries.
