@@ -76,7 +76,7 @@ CREATE TABLE Events(
     FOREIGN KEY (urestriction) REFERENCES Universities(univid)
         ON DELETE CASCADE,
     FOREIGN KEY (rsorestriction) REFERENCES RSOs(rid)
-        ON DELETE CASCADE,
+        ON DELETE CASCADE
 );
 
 CREATE TABLE RSOMembers(
@@ -97,7 +97,7 @@ CREATE TABLE UserRating(
     FOREIGN KEY (username) REFERENCES Users(username)
         ON DELETE CASCADE,
     FOREIGN KEY (eid) REFERENCES Events(eid)
-        ON DELETE CASCADE,
+        ON DELETE CASCADE
 );
 
 CREATE TABLE UserComment(

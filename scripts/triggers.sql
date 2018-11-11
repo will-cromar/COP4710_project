@@ -22,7 +22,7 @@ WHERE RSOs.rid = rid;
 ALTER TABLE UserRating ADD CONSTRAINT CHECK (rating > 0 AND rating < 6);
 
 -- Can't be both a private and an RSO event
-ALTER TABLE Events ADD CONSTRAINT CHECK (urestriction = NULL or rsorestriction = NULL)
+ALTER TABLE Events ADD CONSTRAINT CHECK (urestriction = NULL or rsorestriction = NULL);
 
 -- Prevent scheduling two events at the same time/place
 ALTER TABLE Events ADD CONSTRAINT UNIQUE(dtime, lid);
