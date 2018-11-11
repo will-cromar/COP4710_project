@@ -138,52 +138,15 @@ This constraint is enforced by the application rather than the database. The GUI
 
 ![The current user does not administer any RSOs, so they cannot create an RSO event, but they can request to create a private event for their university. \label{restriction_list}](doc/img/restriction_list.png)
 
-## Example Queries
+## SQL Examples
 
-In this section, I provide some examples of embedded queries from the backend application that demonstrate how the database is used in practice. The string `%s` indicates that the backend application will populate that field based on the current application state.
+Example test data that can be used to initialize the database can be found in `scripts/init_data.sql`. The test data there is used for the example queries. The following figures show examples of SQL queries and results that demonstrate how the database is used in practice
 
-### Fetch All RSO Events
+![An example of creating a new RSO and adding a member and admin to it.](doc/img/example_rso.png)
 
-```SQL
-SELECT * FROM ApprovedEvents
-WHERE rsorestriction IN (
-    SELECT rid FROM RSOMembers
-    WHERE username = %s);
-```
+![An example of creating a new event, adding a comment to it, and editing that comment.](doc/img/example_comments.png)
 
-This query gets all events that have been created for an approved RSO where the current user has membership in that RSO. The design of the representation of Events lends itself to convenient querying of Events and filtering by access restrictions.
-
-### Create a New Location
-
-```SQL
-INSERT INTO Locations(lname, latitude, longitude)
-VALUES (%s, %s, %s)
-```
-
-Although the database enforces the uniqueness of location names, it automatically determines a unique primary key that identifies the location in the rest of the database. Representing locations in a separate tables allows the client to easy query (for example) all events at some location:
-
-```SQL
-SELECT *
-FROM ApprovedEvents
-WHERE lid = %s;
-```
-
-### Update and Access University Photo Albums
-
-More detail on the visual design of this element is provided in Section \ref{university_album}.
-
-```SQL
-INSERT INTO Photos(univid, b64, ftype)
-VALUES (%s, %s, %s)
-```
-
-This query adds an uploaded photo (converted to base 64) to an album for a specific university. It is equally easy to fetch an entire album from the application:
-
-```SQL
-SELECT *
-FROM Photos
-WHERE univid=%s;
-```
+![Examples of querying public, RSO, and private events (respectively) that are visible to `user1`](doc/img/example_event_queries.png)
 
 # Graphical User Interface
 
@@ -207,31 +170,34 @@ The following series of figures demonstrate a typical path through the applicati
 
 ![Now that the user is an admin of an RSO, they can create an RSO event for it.](doc/img/rso_event.png)
 
-# Non-essential Features
+# Advanced Features
 
-The central part of the project is the database, and the backend application provides a thin layer that lets users securely access it. In this section, I describe features that go beyond the minimum requirements to make the database functional and accessible and make it easier to use the application.
+## Responsive Interface Design
 
-## Interface Design
+The graphical user interface is designed to reflow the contents of the page when the width of the screen is adjusted in order to be visually appealing on mobile. See Figure \ref{responsive}.
 
-I went out of my way to may the website intuitive and visually appealing. Some screenshots are provided below.
-
-screenshots
-
-## UCF Event Feed Scraping
-
-A Python script is included in the `scripts/` directory that fetches a week worth of events from the official UCF events website and generate the `INSERT` statements to adapt the data to my database design. This can be used to populate the database with real test data.
+![The event details page automatically reflows content to fit the screen size. \label{responsive}](doc/img/responsive.png)
 
 ## Social Networking
 
-All event details pages include an option to share the event on Twitter.
+All event details pages include an option to share the event on Twitter. See Figure \ref{responsive}.
 
-screenshot
+## UCF Event Feed Scraping
+
+A Python script is included in the `scripts/` directory that fetches a week worth of events from the official UCF events website and generate the `INSERT` statements to adapt the data to my database design. This can be used to populate the database with real test data. An list of real events is shown in Figure \ref{ucf_events}.
+
+![Real events from UCF can be scraped from the website and added to this application. \label{ucf_events}](doc/img/ucf_events.png)
 
 ## Interactive Maps {#interactive_map}
+
 Event details pages all feature an interactive map that lets users see the area around where an event is scheduled. Additionally, new events can be created by selecting the name of an existing location from a list, but users can also add new locations to host their event at using an interactive map.
 
-screenshots
+An example of a map with a fixed in is shown in Figure \ref{responsive}. The graphical location picker is shown in Figure \ref{location_picker}.
+
+![The location picker component lets the user either enter the coordinates of a location automatically or select a location directly on the map. \label{location_picker}](doc/img/location_picker.png)
 
 ## University Album {#university_album}
 
+The application implements a University View page where users can see a list of all of the events for that university that also features an automatically scrolling list of photos, which are added by the super-admins. A screenshot is shown in \ref{ucf_screenshot}.
 
+![The university view page features a list of all events for that university and a slideshow. \label{ucf_screenshot}](doc/img/ucf_screenshot.png)
