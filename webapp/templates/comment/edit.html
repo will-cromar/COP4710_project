@@ -3,4 +3,8 @@
 <script>
 document.getElementById("comment").value = "{{ comment.comment }}";
 </script>
+<br>
+<form action="/comment/delete/{{ comment.cid }}" method="post">
+    <input class="btn btn btn-outline-danger" value="Delete" type="submit" >
+</form>
 {% endblock %}

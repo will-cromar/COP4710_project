@@ -480,3 +480,20 @@ def comment_edit(cid):
     return render_template('comment/edit.html', form=form,
                            action="/comment/new", comment=comment,
                            name="Edit comment #{}".format(comment.cid))
+
+
+@app.route('/comment/delete/<cid>', methods=["POST"])
+@login_required
+def comment_delete(cid):
+    c = db.cursor(named_tuple=True)
+    c.execute("SELECT * FROM UserComment "
+              "WHERE cid=%s;", (cid,))
+    comment = c.fetchone()
+
+    if current_user.username != comment.username:
+        abort(403)
+
+    c.execute("DELETE FROM UserComment "
+              "WHERE cid=%s;", (cid,))
+
+    return redirect('/event/{}'.format(comment.eid))
