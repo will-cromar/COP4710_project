@@ -43,7 +43,7 @@ There are three event types given in the project requirements: public, private, 
 1. Store all three types in the same table, and only use some attributes for certain types of events. This imposes a risk of setting conflicting options (i.e. making an event that’s both RSO and private type), but makes querying all events quite easy.
 1. Store all common attributes in one main table Events and have tables for each type that reference it. This makes querying common attributes of events easy, but make determining the scope of an event given just its common attributes harder.
 
-A separate decision to display the scope of an event in the user interface informed a decision to select option (2). In this design, all events are assumed to be public unless the set either a _university restriction_ or _rso restriction_. In order to mitigate the risk of erroneously creating an event that sets both restrictions, a simple check was introduced to the table to ensure only zero or one restriction is set (see Section \ref{constraints}). Then, the scope of an event can be determine just by querying the one table.
+A separate decision to display the scope of an event in the user interface informed a decision to select option (2). In this design, all events are assumed to be public unless they set either a _university restriction_ or _rso restriction_. In order to mitigate the risk of erroneously creating an event that sets both restrictions, a simple check was introduced to the table to ensure only zero or one restriction is set (see Section \ref{constraints}). Then, the scope of an event can be determine just by querying the one table.
 
 ### Users
 
@@ -52,7 +52,7 @@ A similar decision is required to accurately represent the three user types: stu
 1. Anyone can sign up for a username and password and are added to the `Users` table.
 1. A user can be promoted to super admin by the DBA, who can add their name directly to the `SuperUsers` table.
 1. `Users` can enter their university name and student e-mail to become a _student_ in the Students table.
-1. A student can request to create an RSO, and will be added to the Admins table. Note that this design permits multiple admins for one RSO and allows a student to administer multiple RSOs. This new RSO is approved by a super admin.
+1. A student can request to create an RSO, and will be added to the Admins table. Note that this design permits multiple admins for one RSO and allows a student to administer multiple RSOs.
 
 The information in these tables is combined into one view that has the users credentials, nullable student information, and a flag indicating whether they are a _super admin_.
 
@@ -125,6 +125,8 @@ WHERE RSOs.rid = rid;
 This constraint is enforced by the application rather than the database. The GUI presents a list containing only the current user's RSOs and Universities to restrict the scope of the event. So, a non-admin can't create an event on behalf of an RSO. See Figure \ref{restriction_list} for an example.
 
 ![The current user does not administer any RSOs, so they cannot create an RSO event, but they can request to create a private event for their university. \label{restriction_list}](doc/img/restriction_list.png)
+
+\clearpage
 
 ## SQL Examples
 
@@ -212,4 +214,4 @@ Although the application is resistant to XSS and CSRF attacks, there remain some
 
 ## Challenges
 
-Building this application turned out to be considerably more work than I expected, although I found all of it to be pretty straightforward. I used SQL everywhere to meet the project goal of teaching SQL. However, I found this to be much more error-prone than necessary. Since all queries were written by hand and embedded in the application, typos in table or column names could not be caught with static analysis tools (e.g. linters) and always surfaced at runtime. In my industry experience, developers nearly always use ORM (object-relational mapper) libraries to define their tables (rather than directly using `CREATE TABLE`) and only explicitly write out queries in SQL for performance reasons. This lets them do most simple operations using constructs defined in the application language where static analysis tools can check their work. If I were to start a real-world project from scratch, I would certainly use an ORM and avoid embedded queries.
+Building this application turned out to be considerably more work than I expected, although I found all of it to be pretty straightforward. I used embedded SQL queries everywhere to meet the project restrictions. However, I found this to be much more error-prone than necessary. Since all queries were written by hand and embedded in the application, typos in table or column names could not be caught with static analysis tools (e.g. linters) and always surfaced at runtime. In my industry experience, developers nearly always use ORM (object-relational mapper) libraries to define their tables (rather than directly using `CREATE TABLE`) and only explicitly write out queries in SQL for performance reasons. This lets them do most simple operations using constructs defined in the application language where static analysis tools can check their work. If I were to start a real-world project from scratch, I would certainly use an ORM and avoid embedded queries.
