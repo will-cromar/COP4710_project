@@ -175,8 +175,8 @@ def student_info():
             db.commit()
         else:
             print(warns)
-    else:
-        print(form.errors)
+
+        return redirect("/")
 
     return render_template("form.html", action='/account/student',
                            name="Update Student Information", form=form)
@@ -353,7 +353,16 @@ def event_list():
     elif current_user.is_super_user() and f == "all":
         c.execute("SELECT * FROM EventsInfo;")
     else:
-        c.execute("SELECT * FROM ApprovedEvents;")
+        c.execute("SELECT * FROM ApprovedEvents "
+                  "WHERE urestriction IN ("
+                  "SELECT univid FROM Students "
+                  "WHERE username = %s"
+                  ") OR rsorestriction IN ("
+                  "SELECT rid FROM RSOMembers "
+                  "WHERE username = %s) "
+                  "OR urestriction IS NULL AND "
+                  "rsorestriction IS NULL;",
+                  (current_user.username, current_user.username))
 
     return render_template('event/list.html', rows=c.fetchall())
 
